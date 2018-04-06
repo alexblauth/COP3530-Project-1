@@ -1,0 +1,390 @@
+import java.util.*;
+
+/** Alexander Blauth
+ *  COP3530 Project 1
+ *  3/30/18
+ * 
+ */
+public class SparseMatrix implements SparseInterface {
+    private int numRows;
+    private int numCols;
+    public LinkedList<Entry> myMatrix;
+    
+    /*
+     * Default constructor which creates a 5 x 5 matrix on
+     * startup.
+     */
+    public SparseMatrix() {
+        this.numRows = 5;
+        this.numCols = 5;
+        myMatrix = new LinkedList<Entry>();
+    }
+    
+    /*
+     * Constructor which allows the user to set the matrix
+     * dimensions.
+     * 
+     * @param size sets length x width of square matrix
+     */
+    public SparseMatrix(int numRows, int numCols) {
+        this.numRows = numRows;
+        this.numCols = numCols;
+        myMatrix = new LinkedList<Entry>();
+    }
+
+    public int getNumRows() {
+        return numRows;
+    }
+    
+    public int getNumCols() {
+        return this.numCols;
+    }
+    
+    /*
+     * Static method to print out the option menu.
+     */
+    public static void printMenu() {
+        System.out.print("\n[1] Set the size of the matrix\n" +
+         "[2] Add a matrix entry\n" +
+         "[3] Remove a matrix entry\n" +
+         "[4] Compute deteminant\n" +
+         "[5] Show matrix size\n" +
+         "[6] Show specific entry\n" + 
+         "[7] Show the matrix\n" +
+         "[8] Clear matrix\n" +
+         "[Q] Quit the program\n" +
+         "Please make a selection: ");
+    }
+    
+    /*
+     * Main Method
+     */
+    public static void main(String args[]) {
+        Scanner userInput = new Scanner(System.in);
+        int row, col, determinant;
+        int size, data;
+        
+        SparseInterface userMatrix = new SparseMatrix();
+        SparseInterface otherMatrix = new SparseMatrix();
+        
+        
+        userMatrix.setSize(3, 3);
+
+        
+        userMatrix.addElement(0, 0, 16);
+
+        userMatrix.addElement(0, 1, 4);
+
+        userMatrix.removeElement(0,1);
+        
+        System.out.println(userMatrix.toString());
+        //printMenu();
+        //String userChoice = " ";
+        
+        /*userMatrix.setSize(3,3);
+        userMatrix.addElement(0, 1, 2);
+        userMatrix.addElement(0, 2, 3);
+        userMatrix.addElement(1, 0, 4);
+        userMatrix.addElement(2, 2, 5);
+        System.out.println(userMatrix.toString());
+        
+        otherMatrix.setSize(3,3);
+        otherMatrix.addElement(0, 2, 7);
+        otherMatrix.addElement(1, 1, 8);
+        otherMatrix.addElement(2, 1, 9);
+        otherMatrix.addElement(2, 2, 6);
+        System.out.println(otherMatrix.toString());
+        
+        System.out.println(userMatrix.multiplyMatrices(otherMatrix).toString()); */
+        
+        
+        /*while(!userChoice.equalsIgnoreCase("Q")) {
+            userChoice = userInput.next();
+            
+            if(userChoice.equalsIgnoreCase("1")) {
+                System.out.print("What size (N x N) would you like the matrix to be? ");
+                size = userInput.nextInt();
+            userMatrix.setSize(size);        
+            }
+            else if(userChoice.equalsIgnoreCase("2")) {
+                System.out.print("In which row would you like to insert the entry? ");
+            row = userInput.nextInt();
+            System.out.print("In which column would you like to insert the entry? ");
+            col = userInput.nextInt();
+            System.out.print("What number would you like to add to the matrix? ");
+            data = userInput.nextInt();
+            userMatrix.addElement(row, col, data);
+            }
+            else if(userChoice.equalsIgnoreCase("3")) {
+                System.out.print("Which row would you like to remove an entry from? ");
+                row = userInput.nextInt();
+            System.out.print("Which column would you like to remove an entry from? ");
+            col = userInput.nextInt();
+            userMatrix.removeElement(row, col);
+            }
+            else if(userChoice.equalsIgnoreCase("4")) {
+                determinant = userMatrix.determinant();
+            System.out.println(determinant);
+            }
+            else if(userChoice.equalsIgnoreCase("5")) {
+                System.out.println("The size of the matrix is " + userMatrix.getSize() );
+            }
+            else if(userChoice.equalsIgnoreCase("6")) {
+                System.out.print("Which row would you like to get an entry from? ");
+            row = userInput.nextInt();
+            System.out.print("Which column would you like to get an entry from? ");
+            col = userInput.nextInt();
+            System.out.println(userMatrix.getElement(row, col));
+            }
+            else if(userChoice.equalsIgnoreCase("7")) {
+                System.out.println(userMatrix.toString());
+            }
+            else if(userChoice.equalsIgnoreCase("8")) {
+                userMatrix.clear();
+                System.out.println("The matrix now contains no values.");
+            }
+            else if(userChoice.equalsIgnoreCase("Q")) {
+                System.exit(10);
+            }
+            else {
+                System.out.println("Error: Please make a selection from the list");
+            }
+            printMenu();
+        }  */ 
+    } 
+    
+    /*
+     *  Should clear the matrix of all entries (make all entries 0)
+     */
+    public void clear() {
+        myMatrix.clear();
+    }
+
+    /*
+     *  Sets maximum size of the matrix.  Number of rows. Itshould also clear the matrix (make all elements 0)
+     */
+    public void setSize(int numRows, int numCols) {
+        this.numRows = numRows;
+        this.numCols = numCols;
+        myMatrix = new LinkedList<Entry>();
+    }
+
+    /*
+     *  Adds an element to the row and column passed as arguments (overwrites if element is already present at that position).
+     *  Throws an error if row/column combination is out of bounds.
+     */
+    public void addElement(int row, int col, int data) {
+        if(data == 0) {
+            removeElement(row, col);
+            //System.out.println("Cannot add 0 to sparse matrix");
+            return;
+        }
+        
+        if (row >= this.numRows || col >= this.numCols || row < 0 || col < 0) {
+            System.out.println("Index does not exist, matrix is unchanged.");
+            return;
+        }
+        
+        int i = 0;
+        for (Entry c: myMatrix) {
+            if (row > c.getRow()) {
+                i++;
+            }
+            
+            if (row == c.getRow()) {
+                if (col > c.getCol()) {
+                    i++;
+                }
+            }
+        }
+        
+        if(getElement(row, col) != -1) {
+            removeElement(row, col);
+        }
+        
+        Entry entry = new Entry(row, col, data);
+        myMatrix.add(i, entry);
+    }
+
+    /*
+        Remove (make 0) the element at the specified row and column.
+        Throws an error if row/column combination is out of bounds.
+     */
+    public void removeElement(int row, int col) {
+        if (row >= this.numRows || col >= this.numCols || row < 0 || col < 0) {
+            System.out.println("Index does not exist, matrix is unchanged.");
+            return;
+        }
+        
+        int i = 0;
+        for (Entry c: myMatrix) {
+            if (row > c.getRow()) {
+                i++;
+            }
+            
+            if (row == c.getRow()) {
+                if (col > c.getCol()) {
+                    i++;
+                }
+            }
+        }
+        
+        
+        
+        for (Entry c : myMatrix) {
+            if (c.getRow() == row && c.getCol() == col) {
+                myMatrix.remove(i);
+                
+            }
+        } 
+    } 
+
+    /*
+     *  Return the element at the specified row and column
+     *  Throws an error if row/column combination is out of bounds.
+     */
+    public int getElement(int row, int col) {
+        if (row >= this.numRows || col >= this.numCols || row < 0 || col < 0) {
+            System.out.println("Index does not exist, matrix is unchanged.");
+            return -1;
+        }
+        
+        for (Entry c : myMatrix) {
+            if (c.getRow() == row && c.getCol() == col) {
+                return c.getData();
+            }
+        }
+        
+        if (row < numRows && col < numCols) {
+            //System.out.println("Error: Index out of bounds");
+            return 0;
+        }
+        return 0;
+    } 
+
+    /*
+    Should return the nonzero elements of your sparse matrix as a string.
+    The String should be k lines, where k is the number of nonzero elements.
+    Each line should be in the format "row column data" where row and column are the "coordinate" of the data and all are separated by spaces.
+    An empty matrix should return an empty string.
+    The print should be from left to right and from top to bottom (like reading a book) i.e. the matrix
+
+                                                     3 0 1
+                                                     0 2 0
+                                                     0 0 4
+
+                                                 Should print as:
+                                                     0 0 3
+                                                     0 2 1
+                                                     1 1 2
+                                                     2 2 4
+
+     */
+    public String toString() {
+        String matrixAsString = "";
+        for (Entry c : myMatrix) {
+            matrixAsString += (c.getRow() + " " + c.getCol() + " " + c.getData() + "\n");
+        }
+        
+        return matrixAsString;
+    }
+
+    /*takes another matrix as input and returns the sum of the two matrices
+     *return NULL if sizes incompatible
+     */
+    public SparseInterface addMatrices(SparseInterface matrixToAdd) {
+        if((matrixToAdd.getNumRows() != numRows) || (matrixToAdd.getNumCols() != numCols)) {
+            return null;
+        }
+        SparseInterface addedMatrices = new SparseMatrix(numRows, numCols);
+        
+        for (Entry c : myMatrix) {
+            int row2 = c.getRow();
+            int col2 = c.getCol();
+            
+            int dataToAdd = matrixToAdd.getElement(row2,col2);
+            addedMatrices.addElement(row2,col2,dataToAdd + c.getData());
+        }
+        return addedMatrices;        
+    }
+    
+    /*
+     * Takes another matrix as input and returns the product of the two matrices
+     * return NULL if sizes incompatible
+     */
+    public SparseInterface multiplyMatrices(SparseInterface matrixToMultiply) {
+        if(matrixToMultiply.getNumRows() != numCols) {
+            return null;
+        }
+        
+        SparseInterface multipliedMatrix = new SparseMatrix(numRows, matrixToMultiply.getNumCols());
+        
+        int[][] arrA = new int[numRows][numCols];
+        int[][] arrB = new int[matrixToMultiply.getNumRows()][matrixToMultiply.getNumCols()];
+        
+        for(int c = 0; c < numRows; c++) {
+            for(int i = 0; i < numCols; i++) {
+                arrA[c][i] = 0;
+            }
+        }
+        
+        for(Entry x : myMatrix) {
+            int col = x.getCol();
+            int row = x.getRow();
+            int data = x.getData();
+            
+            arrA[row][col] = data;
+        }
+        
+        for(int c = 0; c < matrixToMultiply.getNumRows(); c++) {
+            for(int i = 0; i < matrixToMultiply.getNumCols(); i++) {
+                if(matrixToMultiply.getElement(c, i) != 0) {
+                    arrB[c][i] = matrixToMultiply.getElement(c,i); 
+                }
+                else {
+                    arrB[c][i] = 0; 
+                }
+            }
+        }
+        
+        int aRows = arrA.length;
+        int aColumns = arrA[0].length;
+        int bRows = arrB.length;
+        int bColumns = arrB[0].length;
+
+        int[][] arrC = new int[aRows][bColumns];
+        for (int i = 0; i < aRows; i++) {
+            for (int j = 0; j < bColumns; j++) {
+                arrC[i][j] = 0;
+            }
+        }
+
+        for (int i = 0; i < aRows; i++) { // aRow
+            for (int j = 0; j < bColumns; j++) { // bColumn
+                for (int k = 0; k < aColumns; k++) { // aColumn
+                    arrC[i][j] += arrA[i][k] * arrB[k][j];
+                }
+            }
+        }
+        
+        /*for(int c = 0; c < arrC.length; c++) {
+            for(int i = 0; i < arrC[c].length; i++) {
+                System.out.print(arrC[c][i] + " ");
+            }
+            System.out.println();
+        } */
+        
+        for(int c = 0; c < arrC.length; c++) {
+            for(int i = 0; i < arrC[c].length; i++) {
+                if(arrC[c][i] != 0) {
+                    multipliedMatrix.addElement(c,i,arrC[c][i]);
+                }
+                else {
+                    //do nothing
+                }
+            }
+        }
+        
+        return multipliedMatrix;
+    }
+}
