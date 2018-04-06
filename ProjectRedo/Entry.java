@@ -27,10 +27,5 @@ public class Entry extends LinkedList {
     public int getData() {
         return this.data;
     }
-    
-    public boolean removeNode(int row, int col) {
-        
-        return true;
-    }
 }
 
